@@ -1,4 +1,7 @@
 import azure.functions as func
+from azure.identity import DefaultAzureCredential
+from azure.mgmt.resource import ResourceManagementClient
+import os
 import datetime
 import json
 import logging
@@ -19,9 +22,40 @@ def HttpExample(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('name')
 
     if name:
-        return func.HttpResponse(f"Hello, {name}!! This HTTP triggered function executed successfully.")
+        return func.HttpResponse(f"Hello, {name}. This HTTP triggered function executed successfully.")
     else:
         return func.HttpResponse(
              "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response.",
              status_code=200
+        )
+
+@app.route(route="ResourceGroups", auth_level=func.AuthLevel.ANONYMOUS)
+def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Python HTTP trigger function processed a request.')
+
+    # Acquire a credential object.
+    credential = DefaultAzureCredential()
+
+    # Retrieve subscription ID from environment variable.
+    subscription_id = os.environ["AZURE_SUBSCRIPTION_ID"]
+
+    # Obtain the management object for resources.
+    resource_client = ResourceManagementClient(credential, subscription_id)
+
+    # Retrieve the list of resource groups
+    group_list = resource_client.resource_groups.list()
+
+    # Show the groups in formatted output
+    column_width = 40
+
+    body = ""
+    for group in list(group_list):
+        body += f"{group.name:<{column_width}}{group.location}"
+
+    if group_list:
+        return func.HttpResponse(body)
+    else:
+        return func.HttpResponse(
+             "None",
+             status_code=404
         )
