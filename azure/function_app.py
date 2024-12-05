@@ -56,7 +56,7 @@ def VirtualNetworks(req: func.HttpRequest) -> func.HttpResponse:
         # Initialize the Azure SDK client with DefaultAzureCredential (which supports managed identity, environment variables, etc.)
         credential = DefaultAzureCredential()
         #subscription_id = os.getenv["AZURE_SUBSCRIPTION_ID"]
-        network_client = NetworkManagementClient(credential, subscription_id)
+        network_client = NetworkManagementClient(credential, "508f906f-b287-4882-b038-c653fe001aa0")
 
         # List all VNets in the given resource group
         vnets = network_client.virtual_networks.list(resource_group_name)
