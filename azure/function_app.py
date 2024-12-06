@@ -98,7 +98,7 @@ def Subnets(req: func.HttpRequest) -> func.HttpResponse:
             )
         
         vnet_name = req.params.get('vnetName')
-        if not resource_group_name:
+        if not vnet_name:
             return func.HttpResponse(
                 "Please pass the 'vnetName' parameter in the query string or request body",
                 status_code=400
