@@ -42,31 +42,16 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
             status_code=500
         )
 
-    # # Show the groups in formatted output
-    # column_width = 40
-
-    # body = ""
-    # for group in list(group_list):
-    #     body += f"{group.name:<{column_width}}{group.location}"
-
-    # if group_list:
-    #     return func.HttpResponse(body)
-    # else:
-    #     return func.HttpResponse(
-    #          "None",
-    #          status_code=404
-    #     )
-
 @app.route(route="VirtualNetworks", auth_level=func.AuthLevel.ANONYMOUS)
 def VirtualNetworks(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('VirtualNetworks function triggered and processing a request.')
 
     try:
         # Get the resource group from the query parameters or request body
-        resource_group_name = req.params.get('resourceGroup')
+        resource_group_name = req.params.get('resourceGroupName')
         if not resource_group_name:
             return func.HttpResponse(
-                "Please pass the 'resourceGroup' parameter in the query string or request body",
+                "Please pass the 'resourceGroupName' parameter in the query string or request body",
                 status_code=400
             )
         
@@ -88,6 +73,55 @@ def VirtualNetworks(req: func.HttpRequest) -> func.HttpResponse:
         # Return the list of VNets as a JSON response
         return func.HttpResponse(
             body=str(vnet_names),
+            status_code=200,
+            mimetype="application/json"
+        )
+
+    except Exception as e:
+        logging.error(f"Error occurred: {str(e)}")
+        return func.HttpResponse(
+            f"An error occurred: {str(e)}",
+            status_code=500
+        )
+
+@app.route(route="Subnets", auth_level=func.AuthLevel.ANONYMOUS)
+def Subnets(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('Subnets function triggered and processing a request.')
+
+    try:
+        # Get the resource group from the query parameters or request body
+        resource_group_name = req.params.get('resourceGroupName')
+        if not resource_group_name:
+            return func.HttpResponse(
+                "Please pass the 'resourceGroupName' parameter in the query string or request body",
+                status_code=400
+            )
+        
+        vnet_name = req.params.get('vnetName')
+        if not resource_group_name:
+            return func.HttpResponse(
+                "Please pass the 'vnetName' parameter in the query string or request body",
+                status_code=400
+            )
+        
+        # Initialize the Azure SDK client with DefaultAzureCredential (which supports managed identity, environment variables, etc.)
+        credential = DefaultAzureCredential()
+
+        # Retrieve subscription ID from environment variable.
+        subscription_id = os.environ.get("SUBSCRIPTION_ID", None)
+        
+        # Obtain the management object for resources.
+        network_client = NetworkManagementClient(credential, subscription_id)
+
+        # List all VNets in the given resource group
+        subnets = network_client.subnets.list(resource_group_name, vnet_name)
+        
+        # Prepare the response data (list of VNets)
+        subnet_names = [subnet.name for subnet in subnets]
+
+        # Return the list of VNets as a JSON response
+        return func.HttpResponse(
+            body=str(subnet_names),
             status_code=200,
             mimetype="application/json"
         )
