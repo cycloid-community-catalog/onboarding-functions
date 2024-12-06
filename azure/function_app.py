@@ -1,6 +1,6 @@
 import azure.functions as func
 from azure.identity import DefaultAzureCredential
-# from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.network import NetworkManagementClient
 import os
 import datetime
@@ -9,35 +9,36 @@ import logging
 
 app = func.FunctionApp()
 
-# @app.route(route="ResourceGroups", auth_level=func.AuthLevel.ANONYMOUS)
-# def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
-#     logging.info('ResourceGroups function triggered and processing a request.')
+@app.route(route="ResourceGroups", auth_level=func.AuthLevel.ANONYMOUS)
+def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
+    logging.info('ResourceGroups function triggered and processing a request.')
 
-#     try:
-#         # Acquire a credential object.
-#         credential = DefaultAzureCredential()
+    try:
+        # Acquire a credential object.
+        credential = DefaultAzureCredential()
 
-#         # Retrieve subscription ID from environment variable.
-#         subscription_id = os.environ.get("SUBSCRIPTION_ID", None)
+        # Retrieve subscription ID from environment variable.
+        subscription_id = os.environ.get("SUBSCRIPTION_ID", None)
 
-#         # Obtain the management object for resources.
-#         resource_client = ResourceManagementClient(credential, subscription_id)
+        # # Obtain the management object for resources.
+        # resource_client = ResourceManagementClient(credential, subscription_id)
 
 #         # Retrieve the list of resource groups
 #         group_list = resource_client.resource_groups.list()
 
-#         return func.HttpResponse(
-#             body=str(group_list),
-#             status_code=200,
-#             mimetype="application/json"
-#         )
+        return func.HttpResponse(
+            # body=str(group_list),
+            body=str("foobar"),
+            status_code=200,
+            mimetype="application/json"
+        )
 
-#     except Exception as e:
-#         logging.error(f"Error occurred: {str(e)}")
-#         return func.HttpResponse(
-#             f"An error occurred: {str(e)}",
-#             status_code=500
-#         )
+    except Exception as e:
+        logging.error(f"Error occurred: {str(e)}")
+        return func.HttpResponse(
+            f"An error occurred: {str(e)}",
+            status_code=500
+        )
 
     # # Show the groups in formatted output
     # column_width = 40
