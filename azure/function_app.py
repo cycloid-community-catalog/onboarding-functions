@@ -1,6 +1,6 @@
 import azure.functions as func
 from azure.identity import DefaultAzureCredential
-# from azure.mgmt.resource import ResourceManagementClient
+from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.network import NetworkManagementClient
 import os
 import datetime
@@ -20,15 +20,14 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         # Retrieve subscription ID from environment variable.
         subscription_id = os.environ.get("SUBSCRIPTION_ID", None)
 
-        # # Obtain the management object for resources.
-        # resource_client = ResourceManagementClient(credential, subscription_id)
+        # Obtain the management object for resources.
+        resource_client = ResourceManagementClient(credential, subscription_id)
 
-#         # Retrieve the list of resource groups
-#         group_list = resource_client.resource_groups.list()
+        # Retrieve the list of resource groups
+        group_list = resource_client.resource_groups.list()
 
         return func.HttpResponse(
-            # body=str(group_list),
-            body=str("foobar"),
+            body=str(group_list),
             status_code=200,
             mimetype="application/json"
         )
