@@ -24,10 +24,13 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         resource_client = ResourceManagementClient(credential, subscription_id)
 
         # Retrieve the list of resource groups
-        group_list = resource_client.resource_groups.list()
+        groups = resource_client.resource_groups.list()
+
+        # Prepare the response data (list of VNets)
+        group_names = [group.name for group in groups]
 
         return func.HttpResponse(
-            body=str(group_list),
+            body=str(group_names),
             status_code=200,
             mimetype="application/json"
         )
