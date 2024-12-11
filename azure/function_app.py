@@ -119,7 +119,7 @@ def Subnets(req: func.HttpRequest) -> func.HttpResponse:
         
         response = []
         for subnet in subnets:
-            response.append(json.loads('{"label": "'+subnet.name+' ('+subnet.AvailabilityZone+')","value": "'+subnet.name+'"}'))
+            response.append(json.loads('{"label": "'+subnet.name+' ('+subnet.address_prefix+')","value": "'+subnet.name+'"}'))
 
         return func.HttpResponse(
             body=json.dumps(response),
