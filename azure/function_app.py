@@ -27,13 +27,25 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         groups = resource_client.resource_groups.list()
 
         # Prepare the response data (list of VNets)
-        group_names = [group.name for group in groups]
+        #group_names = [group.name for group in groups]
+
+
+
+        response = []
+        for group in groups:
+            response.append(json.loads('{"label": "'+group.name+' ('+group.location+')","value": "'+group.name+'"}'))
 
         return func.HttpResponse(
-            body=str(group_names),
+            body=json.dumps(response),
             status_code=200,
             mimetype="application/json"
         )
+
+        # return func.HttpResponse(
+        #     body=str(group_names),
+        #     status_code=200,
+        #     mimetype="application/json"
+        # )
 
     except Exception as e:
         logging.error(f"Error occurred: {str(e)}")
