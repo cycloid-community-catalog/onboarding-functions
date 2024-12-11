@@ -26,11 +26,6 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         # Retrieve the list of resource groups
         groups = resource_client.resource_groups.list()
 
-        # Prepare the response data (list of VNets)
-        #group_names = [group.name for group in groups]
-
-
-
         response = []
         for group in groups:
             response.append(json.loads('{"label": "'+group.name+' ('+group.location+')","value": "'+group.name+'"}'))
@@ -40,12 +35,6 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
             status_code=200,
             mimetype="application/json"
         )
-
-        # return func.HttpResponse(
-        #     body=str(group_names),
-        #     status_code=200,
-        #     mimetype="application/json"
-        # )
 
     except Exception as e:
         logging.error(f"Error occurred: {str(e)}")
@@ -79,12 +68,12 @@ def VirtualNetworks(req: func.HttpRequest) -> func.HttpResponse:
         # List all VNets in the given resource group
         vnets = network_client.virtual_networks.list(resource_group_name)
         
-        # Prepare the response data (list of VNets)
-        vnet_names = [vnet.name for vnet in vnets]
+        response = []
+        for vnet in vnets:
+            response.append(json.loads('{"label": "'+vnet.name+' ('+vnet.location+')","value": "'+vnet.name+'"}'))
 
-        # Return the list of VNets as a JSON response
         return func.HttpResponse(
-            body=str(vnet_names),
+            body=json.dumps(response),
             status_code=200,
             mimetype="application/json"
         )
@@ -128,12 +117,12 @@ def Subnets(req: func.HttpRequest) -> func.HttpResponse:
         # List all VNets in the given resource group
         subnets = network_client.subnets.list(resource_group_name, vnet_name)
         
-        # Prepare the response data (list of VNets)
-        subnet_names = [subnet.name for subnet in subnets]
+        response = []
+        for subnet in subnets:
+            response.append(json.loads('{"label": "'+subnet.name+' ('+subnet.AvailabilityZone+')","value": "'+subnet.name+'"}'))
 
-        # Return the list of VNets as a JSON response
         return func.HttpResponse(
-            body=str(subnet_names),
+            body=json.dumps(response),
             status_code=200,
             mimetype="application/json"
         )
