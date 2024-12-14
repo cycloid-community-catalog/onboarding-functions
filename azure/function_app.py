@@ -24,7 +24,7 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         resource_client = ResourceManagementClient(credential, subscription_id)
 
         # Retrieve the list of locations
-        locations = resource_client.providers.list()
+        locations = resource_client.locations.list()
 
         response = []
         for location in locations:
