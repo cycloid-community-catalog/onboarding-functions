@@ -32,7 +32,7 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         resource_client = ResourceManagementClient(credential, subscription_id)
 
         # Retrieve the list of resource groups
-        groups = resource_client.resource_groups.list(filter=f"location eq '{location}'")
+        groups = resource_client.resource_groups.list(location=location)
 
         response = []
         for group in groups:
