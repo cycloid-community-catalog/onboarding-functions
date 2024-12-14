@@ -6,4 +6,3 @@ azure-functions
 azure-identity
 azure-mgmt-network
 azure-mgmt-resource
-azure-mgmt-subscription
