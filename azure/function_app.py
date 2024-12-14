@@ -32,7 +32,7 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         resource_client = ResourceManagementClient(credential, subscription_id)
 
         # Retrieve the list of resource groups
-        groups = resource_client.resource_groups.list(filter=f"location eq {location}")
+        groups = resource_client.resource_groups.list($filter=f"location eq '{location}'")
 
         response = []
         for group in groups:
@@ -82,7 +82,7 @@ def VirtualNetworks(req: func.HttpRequest) -> func.HttpResponse:
         network_client = NetworkManagementClient(credential, subscription_id)
 
         # List all VNets in the given resource group
-        vnets = network_client.virtual_networks.list(resource_group_name, location=location)
+        vnets = network_client.virtual_networks.list(resource_group_name, filter=f"location eq '{location}'")
         
         response = []
         for vnet in vnets:
