@@ -32,11 +32,12 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         resource_client = ResourceManagementClient(credential, subscription_id)
 
         # Retrieve the list of resource groups
-        groups = resource_client.resource_groups.list($filter=f"location eq '{location}'")
+        groups = resource_client.resource_groups.list()
 
         response = []
         for group in groups:
-            response.append(json.loads('{"label": "'+group.name+' ('+group.location+')","value": "'+group.name+'"}'))
+            if group.location == location:
+                response.append(json.loads('{"label": "'+group.name+' ('+group.location+')","value": "'+group.name+'"}'))
 
         return func.HttpResponse(
             body=json.dumps(response),
@@ -82,11 +83,12 @@ def VirtualNetworks(req: func.HttpRequest) -> func.HttpResponse:
         network_client = NetworkManagementClient(credential, subscription_id)
 
         # List all VNets in the given resource group
-        vnets = network_client.virtual_networks.list(resource_group_name, filter=f"location eq '{location}'")
+        vnets = network_client.virtual_networks.list(resource_group_name)
         
         response = []
         for vnet in vnets:
-            response.append(json.loads('{"label": "'+vnet.name+' ('+vnet.location+')","value": "'+vnet.name+'"}'))
+            if vnet.location == location:
+                response.append(json.loads('{"label": "'+vnet.name+' ('+vnet.location+')","value": "'+vnet.name+'"}'))
 
         return func.HttpResponse(
             body=json.dumps(response),
