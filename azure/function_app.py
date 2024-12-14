@@ -32,7 +32,7 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         resource_client = ResourceManagementClient(credential, subscription_id)
 
         # Retrieve the list of resource groups
-        groups = resource_client.resource_groups.list(location=location)
+        groups = resource_client.resource_groups.list(filter=f"location eq {location}")
 
         response = []
         for group in groups:
@@ -56,6 +56,14 @@ def VirtualNetworks(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('VirtualNetworks function triggered and processing a request.')
 
     try:
+        # Get the location from the query parameters or request body
+        location = req.params.get('location')
+        if not location:
+            return func.HttpResponse(
+                "Please pass the 'location' parameter in the query string or request body",
+                status_code=400
+            )
+        
         # Get the resource group from the query parameters or request body
         resource_group_name = req.params.get('resourceGroupName')
         if not resource_group_name:
@@ -74,7 +82,7 @@ def VirtualNetworks(req: func.HttpRequest) -> func.HttpResponse:
         network_client = NetworkManagementClient(credential, subscription_id)
 
         # List all VNets in the given resource group
-        vnets = network_client.virtual_networks.list(resource_group_name)
+        vnets = network_client.virtual_networks.list(resource_group_name, location=location)
         
         response = []
         for vnet in vnets:
