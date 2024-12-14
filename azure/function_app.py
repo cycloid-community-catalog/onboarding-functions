@@ -2,6 +2,7 @@ import azure.functions as func
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.network import NetworkManagementClient
+from azure.mgmt.subscription import SubscriptionClient
 import os
 import datetime
 import json
@@ -13,18 +14,20 @@ app = func.FunctionApp()
 def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Locations function triggered and processing a request.')
 
+    for location in locations:
+        print(location.name)
     try:
         # Acquire a credential object.
         credential = DefaultAzureCredential()
 
         # Retrieve subscription ID from environment variable.
         subscription_id = os.environ.get("SUBSCRIPTION_ID", None)
-
+        
         # Obtain the management object for resources.
-        resource_client = ResourceManagementClient(credential, subscription_id)
+        subscription_client = SubscriptionClient(credential)
 
         # Retrieve the list of locations
-        locations = resource_client.locations.list()
+        locations = subscription_client.subscriptions.list_locations(subscription_id)
 
         response = []
         for location in locations:
