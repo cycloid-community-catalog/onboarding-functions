@@ -14,6 +14,14 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('ResourceGroups function triggered and processing a request.')
 
     try:
+        # Get the location from the query parameters or request body
+        location = req.params.get('location')
+        if not location:
+            return func.HttpResponse(
+                "Please pass the 'location' parameter in the query string or request body",
+                status_code=400
+            )
+        
         # Acquire a credential object.
         credential = DefaultAzureCredential()
 
@@ -24,7 +32,7 @@ def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
         resource_client = ResourceManagementClient(credential, subscription_id)
 
         # Retrieve the list of resource groups
-        groups = resource_client.resource_groups.list()
+        groups = resource_client.resource_groups.list(filter=f"location eq '{location}'")
 
         response = []
         for group in groups:
