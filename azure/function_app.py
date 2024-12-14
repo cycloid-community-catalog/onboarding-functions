@@ -2,7 +2,6 @@ import azure.functions as func
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.network import NetworkManagementClient
-from azure.mgmt.subscription import SubscriptionClient
 import os
 import datetime
 import json
