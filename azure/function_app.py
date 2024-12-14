@@ -10,42 +10,6 @@ import logging
 
 app = func.FunctionApp()
 
-@app.route(route="Locations", auth_level=func.AuthLevel.ANONYMOUS)
-def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
-    logging.info('Locations function triggered and processing a request.')
-
-    for location in locations:
-        print(location.name)
-    try:
-        # Acquire a credential object.
-        credential = DefaultAzureCredential()
-
-        # Retrieve subscription ID from environment variable.
-        subscription_id = os.environ.get("SUBSCRIPTION_ID", None)
-        
-        # Obtain the management object for resources.
-        subscription_client = SubscriptionClient(credential)
-
-        # Retrieve the list of locations
-        locations = subscription_client.subscriptions.list_locations(subscription_id)
-
-        response = []
-        for location in locations:
-            response.append(json.loads('{"label": "'+location.location+'","value": "'+location.name+'"}'))
-
-        return func.HttpResponse(
-            body=json.dumps(response),
-            status_code=200,
-            mimetype="application/json"
-        )
-
-    except Exception as e:
-        logging.error(f"Error occurred: {str(e)}")
-        return func.HttpResponse(
-            f"An error occurred: {str(e)}",
-            status_code=500
-        )
-
 @app.route(route="ResourceGroups", auth_level=func.AuthLevel.ANONYMOUS)
 def ResourceGroups(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('ResourceGroups function triggered and processing a request.')
